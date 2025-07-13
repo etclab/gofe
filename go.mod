@@ -1,4 +1,4 @@
-module github.com/fentec-project/gofe
+module github.com/etclab/gofe
 
 go 1.17
 
