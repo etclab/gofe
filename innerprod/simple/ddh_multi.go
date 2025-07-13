@@ -20,8 +20,8 @@ import (
 	"fmt"
 	"math/big"
 
-	"github.com/fentec-project/gofe/data"
-	"github.com/fentec-project/gofe/sample"
+	"github.com/etclab/gofe/data"
+	"github.com/etclab/gofe/sample"
 )
 
 // DDHMulti represents a multi input variant of the

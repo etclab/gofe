@@ -21,8 +21,8 @@ import (
 	"fmt"
 	"math/big"
 
-	"github.com/fentec-project/gofe/data"
-	"github.com/fentec-project/gofe/sample"
+	"github.com/etclab/gofe/data"
+	"github.com/etclab/gofe/sample"
 )
 
 // DamgardDecMultiClient represents a client in a decentralized

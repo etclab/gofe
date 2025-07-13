@@ -21,9 +21,9 @@ import (
 	"testing"
 
 	"github.com/fentec-project/bn256"
-	"github.com/fentec-project/gofe/data"
-	"github.com/fentec-project/gofe/innerprod/fullysec"
-	"github.com/fentec-project/gofe/sample"
+	"github.com/etclab/gofe/data"
+	"github.com/etclab/gofe/innerprod/fullysec"
+	"github.com/etclab/gofe/sample"
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/assert"
 )

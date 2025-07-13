@@ -29,8 +29,8 @@ import (
 	"strconv"
 
 	"github.com/fentec-project/bn256"
-	"github.com/fentec-project/gofe/data"
-	"github.com/fentec-project/gofe/sample"
+	"github.com/etclab/gofe/data"
+	"github.com/etclab/gofe/sample"
 )
 
 // This is a key policy (KP) attribute based (ABE) scheme based on

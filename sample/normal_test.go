@@ -21,7 +21,7 @@ import (
 
 	"math/big"
 
-	"github.com/fentec-project/gofe/sample"
+	"github.com/etclab/gofe/sample"
 	"github.com/stretchr/testify/assert"
 )
 

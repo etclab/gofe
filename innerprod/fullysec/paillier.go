@@ -21,10 +21,10 @@ import (
 	"fmt"
 	"math/big"
 
-	"github.com/fentec-project/gofe/data"
-	"github.com/fentec-project/gofe/internal"
-	"github.com/fentec-project/gofe/internal/keygen"
-	"github.com/fentec-project/gofe/sample"
+	"github.com/etclab/gofe/data"
+	"github.com/etclab/gofe/internal"
+	"github.com/etclab/gofe/internal/keygen"
+	"github.com/etclab/gofe/sample"
 )
 
 // PaillierParams represents parameters for the fully secure Paillier scheme.

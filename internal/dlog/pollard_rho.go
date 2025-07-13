@@ -21,7 +21,7 @@ import (
 	"math"
 	"math/big"
 
-	"github.com/fentec-project/gofe/sample"
+	"github.com/etclab/gofe/sample"
 )
 
 // Pollard's rho algorithm - simple, non-parallel version.

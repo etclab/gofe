@@ -20,10 +20,10 @@ import (
 	"fmt"
 	"math/big"
 
-	"github.com/fentec-project/gofe/data"
-	"github.com/fentec-project/gofe/internal"
-	"github.com/fentec-project/gofe/internal/dlog"
-	"github.com/fentec-project/gofe/sample"
+	"github.com/etclab/gofe/data"
+	"github.com/etclab/gofe/internal"
+	"github.com/etclab/gofe/internal/dlog"
+	"github.com/etclab/gofe/sample"
 )
 
 // DamgardMulti represents a multi input variant of the

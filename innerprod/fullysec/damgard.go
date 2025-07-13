@@ -20,11 +20,11 @@ import (
 	"fmt"
 	"math/big"
 
-	"github.com/fentec-project/gofe/data"
-	"github.com/fentec-project/gofe/internal"
-	"github.com/fentec-project/gofe/internal/dlog"
-	"github.com/fentec-project/gofe/internal/keygen"
-	"github.com/fentec-project/gofe/sample"
+	"github.com/etclab/gofe/data"
+	"github.com/etclab/gofe/internal"
+	"github.com/etclab/gofe/internal/dlog"
+	"github.com/etclab/gofe/internal/keygen"
+	"github.com/etclab/gofe/sample"
 )
 
 // DamgardParams includes public parameters for the Damgard inner

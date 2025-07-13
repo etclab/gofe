@@ -30,8 +30,8 @@ import (
 	"crypto/sha256"
 
 	"github.com/fentec-project/bn256"
-	"github.com/fentec-project/gofe/data"
-	"github.com/fentec-project/gofe/sample"
+	"github.com/etclab/gofe/data"
+	"github.com/etclab/gofe/sample"
 )
 
 // This is a ciphertext policy (CP) attribute based (ABE) scheme based

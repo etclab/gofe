@@ -20,7 +20,7 @@ import (
 	"math/big"
 	"testing"
 
-	"github.com/fentec-project/gofe/sample"
+	"github.com/etclab/gofe/sample"
 )
 
 func TestNormalDoubleConstant(t *testing.T) {

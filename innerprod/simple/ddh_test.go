@@ -20,9 +20,9 @@ import (
 	"math/big"
 	"testing"
 
-	"github.com/fentec-project/gofe/data"
-	"github.com/fentec-project/gofe/innerprod/simple"
-	"github.com/fentec-project/gofe/sample"
+	"github.com/etclab/gofe/data"
+	"github.com/etclab/gofe/innerprod/simple"
+	"github.com/etclab/gofe/sample"
 	"github.com/stretchr/testify/assert"
 )
 

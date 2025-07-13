@@ -21,8 +21,8 @@ import (
 	"testing"
 
 	"github.com/fentec-project/bn256"
-	"github.com/fentec-project/gofe/internal/keygen"
-	"github.com/fentec-project/gofe/sample"
+	"github.com/etclab/gofe/internal/keygen"
+	"github.com/etclab/gofe/sample"
 	"github.com/stretchr/testify/assert"
 )
 

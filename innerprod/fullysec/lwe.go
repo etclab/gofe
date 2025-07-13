@@ -21,9 +21,9 @@ import (
 	"math"
 	"math/big"
 
-	"github.com/fentec-project/gofe/data"
-	gofe "github.com/fentec-project/gofe/internal"
-	"github.com/fentec-project/gofe/sample"
+	"github.com/etclab/gofe/data"
+	gofe "github.com/etclab/gofe/internal"
+	"github.com/etclab/gofe/sample"
 	"github.com/pkg/errors"
 )
 

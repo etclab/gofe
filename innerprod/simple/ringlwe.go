@@ -17,12 +17,12 @@
 package simple
 
 import (
-	gofe "github.com/fentec-project/gofe/internal"
+	gofe "github.com/etclab/gofe/internal"
 	"math"
 	"math/big"
 
-	"github.com/fentec-project/gofe/data"
-	"github.com/fentec-project/gofe/sample"
+	"github.com/etclab/gofe/data"
+	"github.com/etclab/gofe/sample"
 	"github.com/pkg/errors"
 )
 
