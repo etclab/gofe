@@ -17,17 +17,17 @@
 package abe
 
 import (
-	"math/big"
-
+	"bytes"
+	"encoding/gob"
 	"fmt"
+	"io"
+	"math/big"
 	"strconv"
 
 	"crypto/aes"
 	cbc "crypto/cipher"
 	"crypto/rand"
 	"crypto/sha256"
-
-	"io"
 
 	"github.com/fentec-project/bn256"
 	"github.com/fentec-project/gofe/data"
@@ -63,10 +63,118 @@ type FAMESecKey struct {
 	PartG1  [3]*bn256.G1
 }
 
+// Marshal serializes FAMESecKey to a byte slice
+func (sk *FAMESecKey) Marshal() ([]byte, error) {
+	var buf bytes.Buffer
+	enc := gob.NewEncoder(&buf)
+
+	// Encode PartInt
+	for _, i := range sk.PartInt {
+		if err := enc.Encode(i); err != nil {
+			return nil, err
+		}
+	}
+
+	// Encode PartG1
+	for _, g1 := range sk.PartG1 {
+		if err := enc.Encode(g1.Marshal()); err != nil {
+			return nil, err
+		}
+	}
+
+	return buf.Bytes(), nil
+}
+
+// Unmarshal deserializes a byte slice into FAMESecKey
+func (sk *FAMESecKey) Unmarshal(data []byte) error {
+	buf := bytes.NewBuffer(data)
+	dec := gob.NewDecoder(buf)
+
+	// Decode PartInt
+	for i := 0; i < 4; i++ {
+		var bi big.Int
+		if err := dec.Decode(&bi); err != nil {
+			return err
+		}
+		sk.PartInt[i] = new(big.Int).Set(&bi)
+	}
+
+	// Decode PartG1
+	for i := 0; i < 3; i++ {
+		var b []byte
+		if err := dec.Decode(&b); err != nil {
+			return err
+		}
+		sk.PartG1[i] = new(bn256.G1)
+		_, err := sk.PartG1[i].Unmarshal(b)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 // FAMEPubKey represents a public key of a FAME scheme.
 type FAMEPubKey struct {
 	PartG2 [2]*bn256.G2
 	PartGT [2]*bn256.GT
+}
+
+// Marshal serializes FAMEPubKey to a byte slice
+func (pk *FAMEPubKey) Marshal() ([]byte, error) {
+	var buf bytes.Buffer
+	enc := gob.NewEncoder(&buf)
+
+	// Encode PartG2
+	for _, g2 := range pk.PartG2 {
+		if err := enc.Encode(g2.Marshal()); err != nil {
+			return nil, err
+		}
+	}
+
+	// Encode PartGT
+	for _, gt := range pk.PartGT {
+		if err := enc.Encode(gt.Marshal()); err != nil {
+			return nil, err
+		}
+	}
+
+	return buf.Bytes(), nil
+}
+
+// Unmarshal deserializes a byte slice into FAMEPubKey
+func (pk *FAMEPubKey) Unmarshal(data []byte) error {
+	buf := bytes.NewBuffer(data)
+	dec := gob.NewDecoder(buf)
+
+	// Decode PartG2
+	for i := 0; i < 2; i++ {
+		var b []byte
+		if err := dec.Decode(&b); err != nil {
+			return err
+		}
+		pk.PartG2[i] = new(bn256.G2)
+		_, err := pk.PartG2[i].Unmarshal(b)
+		if err != nil {
+			return err
+		}
+	}
+
+	// Decode PartGT
+	for i := 0; i < 2; i++ {
+		var b []byte
+		if err := dec.Decode(&b); err != nil {
+			return err
+		}
+		pk.PartGT[i] = new(bn256.GT)
+		_, err := pk.PartGT[i].Unmarshal(b)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 // GenerateMasterKeys generates a new set of public keys, needed
@@ -102,6 +210,116 @@ type FAMECipher struct {
 	Msp     *MSP
 	SymEnc  []byte // symmetric encryption of the message
 	Iv      []byte // initialization vector for symmetric encryption
+}
+
+// Marshal serializes FAMECipher to a byte slice
+func (c *FAMECipher) Marshal() ([]byte, error) {
+	var buf bytes.Buffer
+	enc := gob.NewEncoder(&buf)
+
+	// Encode Ct0
+	for _, g2 := range c.Ct0 {
+		if err := enc.Encode(g2.Marshal()); err != nil {
+			return nil, err
+		}
+	}
+
+	// Encode Ct
+	if err := enc.Encode(len(c.Ct)); err != nil {
+		return nil, err
+	}
+	for _, ct := range c.Ct {
+		for _, g1 := range ct {
+			if err := enc.Encode(g1.Marshal()); err != nil {
+				return nil, err
+			}
+		}
+	}
+
+	// Encode CtPrime
+	if err := enc.Encode(c.CtPrime.Marshal()); err != nil {
+		return nil, err
+	}
+
+	// Encode Msp
+	if err := enc.Encode(c.Msp); err != nil {
+		return nil, err
+	}
+
+	// Encode SymEnc and Iv
+	if err := enc.Encode(c.SymEnc); err != nil {
+		return nil, err
+	}
+	if err := enc.Encode(c.Iv); err != nil {
+		return nil, err
+	}
+
+	return buf.Bytes(), nil
+}
+
+// Unmarshal deserializes a byte slice into FAMECipher
+func (c *FAMECipher) Unmarshal(data []byte) error {
+	buf := bytes.NewBuffer(data)
+	dec := gob.NewDecoder(buf)
+
+	// Decode Ct0
+	for i := 0; i < 3; i++ {
+		var b []byte
+		if err := dec.Decode(&b); err != nil {
+			return err
+		}
+		c.Ct0[i] = new(bn256.G2)
+		_, err := c.Ct0[i].Unmarshal(b)
+		if err != nil {
+			return err
+		}
+	}
+
+	// Decode Ct
+	var ctLen int
+	if err := dec.Decode(&ctLen); err != nil {
+		return err
+	}
+	c.Ct = make([][3]*bn256.G1, ctLen)
+	for i := 0; i < ctLen; i++ {
+		for j := 0; j < 3; j++ {
+			var b []byte
+			if err := dec.Decode(&b); err != nil {
+				return err
+			}
+			c.Ct[i][j] = new(bn256.G1)
+			_, err := c.Ct[i][j].Unmarshal(b)
+			if err != nil {
+				return err
+			}
+		}
+	}
+
+	// Decode CtPrime
+	var b []byte
+	if err := dec.Decode(&b); err != nil {
+		return err
+	}
+	c.CtPrime = new(bn256.GT)
+	_, err := c.CtPrime.Unmarshal(b)
+	if err != nil {
+		return err
+	}
+
+	// Decode Msp
+	if err := dec.Decode(&c.Msp); err != nil {
+		return err
+	}
+
+	// Decode SymEnc and Iv
+	if err := dec.Decode(&c.SymEnc); err != nil {
+		return err
+	}
+	if err := dec.Decode(&c.Iv); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // Encrypt takes as an input a message msg represented as an element of an elliptic
@@ -223,6 +441,104 @@ type FAMEAttribKeys struct {
 	K         [][3]*bn256.G1
 	KPrime    [3]*bn256.G1
 	AttribToI map[string]int
+}
+
+// Marshal serializes FAMEAttribKeys to a byte slice
+func (ak *FAMEAttribKeys) Marshal() ([]byte, error) {
+	var buf bytes.Buffer
+	enc := gob.NewEncoder(&buf)
+
+	// Encode K0
+	for _, g2 := range ak.K0 {
+		if err := enc.Encode(g2.Marshal()); err != nil {
+			return nil, err
+		}
+	}
+
+	// Encode K
+	if err := enc.Encode(len(ak.K)); err != nil {
+		return nil, err
+	}
+	for _, k := range ak.K {
+		for _, g1 := range k {
+			if err := enc.Encode(g1.Marshal()); err != nil {
+				return nil, err
+			}
+		}
+	}
+
+	// Encode KPrime
+	for _, g1 := range ak.KPrime {
+		if err := enc.Encode(g1.Marshal()); err != nil {
+			return nil, err
+		}
+	}
+
+	// Encode AttribToI
+	if err := enc.Encode(ak.AttribToI); err != nil {
+		return nil, err
+	}
+
+	return buf.Bytes(), nil
+}
+
+// Unmarshal deserializes a byte slice into FAMEAttribKeys
+func (ak *FAMEAttribKeys) Unmarshal(data []byte) error {
+	buf := bytes.NewBuffer(data)
+	dec := gob.NewDecoder(buf)
+
+	// Decode K0
+	for i := 0; i < 3; i++ {
+		var b []byte
+		if err := dec.Decode(&b); err != nil {
+			return err
+		}
+		ak.K0[i] = new(bn256.G2)
+		_, err := ak.K0[i].Unmarshal(b)
+		if err != nil {
+			return err
+		}
+	}
+
+	// Decode K
+	var kLen int
+	if err := dec.Decode(&kLen); err != nil {
+		return err
+	}
+	ak.K = make([][3]*bn256.G1, kLen)
+	for i := 0; i < kLen; i++ {
+		for j := 0; j < 3; j++ {
+			var b []byte
+			if err := dec.Decode(&b); err != nil {
+				return err
+			}
+			ak.K[i][j] = new(bn256.G1)
+			_, err := ak.K[i][j].Unmarshal(b)
+			if err != nil {
+				return err
+			}
+		}
+	}
+
+	// Decode KPrime
+	for i := 0; i < 3; i++ {
+		var b []byte
+		if err := dec.Decode(&b); err != nil {
+			return err
+		}
+		ak.KPrime[i] = new(bn256.G1)
+		_, err := ak.KPrime[i].Unmarshal(b)
+		if err != nil {
+			return err
+		}
+	}
+
+	// Decode AttribToI
+	if err := dec.Decode(&ak.AttribToI); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // GenerateAttribKeys given a set of attributes gamma and the master secret key
